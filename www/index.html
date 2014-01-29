@@ -19,25 +19,122 @@
 -->
 <html>
     <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>
-        <script type="text/javascript" src="phonegap.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
+        <style>
+            .myInputs {
+                vertical-align: middle;
+                background-color: slategray;
+            }
+            input[type="image"] {
+                position: relative;
+                display: block;
+                margin : 0 auto;
+            }
+            input[type="text"] {
+                position: relative;
+                display: block;
+                margin: 0 auto;
+            }
+            label {
+                top: auto;
+                color: white;
+                display: block;
+                text-align: center;
+            }
+        </style>
         <script type="text/javascript">
-            app.initialize();
+            function clearThis(target){
+                target.value= "";
+            }
         </script>
+        <script type="text/javascript">
+            function addEvent(){
+                var event = {"stuff" : document.getElementById("eventInput").value}
+                document.getElementById("eventInput").value="";
+                var myJson = JSON.stringify(event);
+                var fw = new FileWriter(myFS.root.getFile()//"/Documents/test.txt");
+                fw.write(myJson);
+                var fr = new FileReader("/Documents/test.txt");
+                var output = fr.readAsText();
+                event = JSON.parse(output);
+                alert(event.stuff);
+            }
+        </script>
+        <script type="text/javascript" charset="utf-8" src="../platforms/ios/www/cordova.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+            // Wait for device API libraries to load
+            //
+            document.addEventListener("deviceready", onDeviceReady, false);
+            var myFS;
+            // device APIs are available
+            //
+            function init() {
+                document.addEventListener("deviceready", onDeviceReady, true);
+            }
+            function onDeviceReady() {
+                window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
+            }
+
+            function gotFS(fileSystem) {
+                myFS = fileSystem.root;//.getFile("readme.txt", null, gotFileEntry, fail);
+            }
+
+            function gotFileEntry(fileEntry) {
+                fileEntry.file(gotFile, fail);
+            }
+
+            function gotFile(file){
+                readDataUrl(file);
+                readAsText(file);
+            }
+
+            function readDataUrl(file) {
+                var reader = new FileReader();
+                reader.onloadend = function(evt) {
+                    console.log("Read as data URL");
+                    console.log(evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function readAsText(file) {
+                var reader = new FileReader();
+                reader.onloadend = function(evt) {
+                    console.log("Read as text");
+                    console.log(evt.target.result);
+                };
+                reader.readAsText(file);
+            }
+
+            function fail(error) {
+                console.log(error.code);
+            }
+            function gotFileWriter(writer) {
+                writer.onwriteend = function(evt) {
+                    console.log("contents of file now 'some sample text'");
+                    writer.truncate(11);
+                    writer.onwriteend = function(evt) {
+                        console.log("contents of file now 'some sample'");
+                        writer.seek(4);
+                        writer.write(" different text");
+                        writer.onwriteend = function(evt){
+                            console.log("contents of file now 'some different text'");
+                        }
+                    };
+                };
+                writer.write("some sample text");
+            }
+        </script>
+    </head>
+    <body class="myInputs">
+        <div>
+            <label class="centerLabel">
+                Enter event here:
+            </label>
+            <input type="text" id="eventInput" value="">
+            <input type="image" id="submitEvent" src="../platforms/ios/www/Submit.png"onclick="addEvent()">
+            <input type="image" id="analyze" src="../platforms/ios/www/analyze.png" onclick="location.href='../platforms/ios/www/analyzeMenu.html'">
+            <input type="image" id="tags" src="../platforms/ios/www/Tags.png" onclick="location.href='../platforms/ios/www/tagsMenu.html'">
+        </div>
     </body>
 </html>

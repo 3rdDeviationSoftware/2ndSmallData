@@ -51,7 +51,7 @@
                 var event = {"stuff" : document.getElementById("eventInput").value}
                 document.getElementById("eventInput").value="";
                 var myJson = JSON.stringify(event);
-                var fw = new FileWriter("/Documents/test.txt");
+                var fw = new FileWriter(myFS.root.getFile()//"/Documents/test.txt");
                 fw.write(myJson);
                 var fr = new FileReader("/Documents/test.txt");
                 var output = fr.readAsText();
@@ -59,13 +59,13 @@
                 alert(event.stuff);
             }
         </script>
-        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../platforms/ios/www/cordova.js"></script>
         <script type="text/javascript" charset="utf-8">
 
             // Wait for device API libraries to load
             //
             document.addEventListener("deviceready", onDeviceReady, false);
-
+            var myFS;
             // device APIs are available
             //
             function init() {
@@ -76,7 +76,7 @@
             }
 
             function gotFS(fileSystem) {
-                fileSystem.root.getFile("readme.txt", null, gotFileEntry, fail);
+                myFS = fileSystem.root;//.getFile("readme.txt", null, gotFileEntry, fail);
             }
 
             function gotFileEntry(fileEntry) {
@@ -132,9 +132,9 @@
                 Enter event here:
             </label>
             <input type="text" id="eventInput" value="">
-            <input type="image" id="submitEvent" src="Submit.png" onclick="addEvent()">
-            <input type="image" id="analyze" src="analyze.png" onclick="location.href='analyzeMenu.html'">
-            <input type="image" id="tags" src="Tags.png" onclick="location.href='tagsMenu.html'">
+            <input type="image" id="submitEvent" src="../platforms/ios/www/Submit.png"onclick="addEvent()">
+            <input type="image" id="analyze" src="../platforms/ios/www/analyze.png" onclick="location.href='../platforms/ios/www/analyzeMenu.html'">
+            <input type="image" id="tags" src="../platforms/ios/www/Tags.png" onclick="location.href='../platforms/ios/www/tagsMenu.html'">
         </div>
     </body>
 </html>
